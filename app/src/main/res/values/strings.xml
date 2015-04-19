@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Reminder List</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_add_reminder">Add Reminder</string>
+    <string name="title_activity_edit_reminder">Edit Reminder</string>
+    <string name="action_add">Add</string>
+    <string name="add_reminder_title">Title:</string>
+    <string name="add_reminder_description">Description:</string>
+    <string name="add_reminder_due_date">Due date:</string>
+    <string name="add_reminder_completed">Completed:</string>
+    <string name="add_reminder_submit">Submit</string>
+    <string name="add_reminder_reset">Reset</string>
+</resources>
