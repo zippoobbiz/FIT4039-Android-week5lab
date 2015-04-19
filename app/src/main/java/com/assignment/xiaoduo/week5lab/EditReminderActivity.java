@@ -29,7 +29,9 @@ public class EditReminderActivity extends Activity {
         setContentView(R.layout.activity_edit_reminder);
 
         Intent intent = getIntent();
-        Reminder reminder = (Reminder) intent.getSerializableExtra("reminder");
+        int reminderId =  intent.getIntExtra("reminderID", 0);
+
+        final Reminder reminder = DbHelper.selectSingleResult(this, reminderId+"");
         title_et = (EditText)this.findViewById(R.id.title_et);
         description_et = (EditText)this.findViewById(R.id.description_et);
         dueDate_dp = (DatePicker)this.findViewById(R.id.due_date_tp);
@@ -38,8 +40,8 @@ public class EditReminderActivity extends Activity {
         submit_bt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(EditReminderActivity.this, "Button Clicked", Toast.LENGTH_SHORT).show();
-                Reminder r = new Reminder();
+                Log.i("EditReminderActivity", "Edit Reminder Activity update Clicked");
+                Reminder r = reminder;
                 r.setTitle(title_et.getText().toString());
                 r.setDescription(description_et.getText().toString());
                 r.setDueDate(new Date(dueDate_dp.getYear(),dueDate_dp.getMonth(),dueDate_dp.getDayOfMonth()));
@@ -48,10 +50,14 @@ public class EditReminderActivity extends Activity {
                 Intent returnIntent = new Intent();
                 returnIntent.putExtra("reminder",r);
                 setResult(RESULT_OK, returnIntent);
-                finish();
-
-                Log.i("AddReminderActivity", "submit");
-
+                if(DbHelper.updateReminderSuccessfully(EditReminderActivity.this, r))
+                {
+                    Log.i("EditReminderActivity", "update success");
+                    finish();
+                }else
+                {
+                    Log.i("EditReminderActivity", "failed try again");
+                }
             }
 
         });

@@ -36,7 +36,7 @@ public class ReminderListActivity extends Activity {
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
                                     long arg3) {
                 Intent intent = new Intent(ReminderListActivity.this, EditReminderActivity.class);
-                intent.putExtra("reminder",ReminderList.get(arg2));
+                intent.putExtra("reminderID",ReminderList.get(arg2).getId());
                 startActivity(intent);
             }
 
