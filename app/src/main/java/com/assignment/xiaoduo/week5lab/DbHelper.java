@@ -16,16 +16,12 @@ import java.util.List;
 public class DbHelper {
 
     private static SQLiteDatabase sampleDB = null;
-    private static String dbName = "";
-    private static String reminderTable = "";
+    private static String dbName = "FIT4039";
+    private static String reminderTable = "reminderTable";
     private static Context context;
 
-    public void setContext(Context c){
-        context = c;
-    }
-
     //retrieve reminders from database
-    public static List getReminders()
+    public static List getReminders(Context context)
     {
         List<Reminder> reminderList = new ArrayList<Reminder>();
         try {
@@ -85,22 +81,28 @@ public class DbHelper {
     }
 
 
-    public static void createDatabase(Reminder r)
+    public static boolean createDatabaseSuccessfully(Context context, Reminder r)
     {
-        sampleDB = context
-                .openOrCreateDatabase(dbName,
-                        context.MODE_PRIVATE, null);
-        sampleDB.execSQL("CREATE TABLE IF NOT EXISTS "
-                + reminderTable
-                + " ("
-                + "reminderID INTEGER PRIMARY KEY, title varchar(20),description varchar(50),dueDate varchar(20), completed varchar(5))");
-        String insert = "REPLACE INTO " + reminderTable
-                + " Values ('" + r.getTitle()
-                + "','" + r.getDescription()
-                + "','" + r.getDueDate()
-                + "','" + r.isCompleted()
-                + "');";
-        sampleDB.execSQL(insert);
+        try {
+            sampleDB = context
+                    .openOrCreateDatabase(dbName,
+                            context.MODE_PRIVATE, null);
+            sampleDB.execSQL("CREATE TABLE IF NOT EXISTS "
+                    + reminderTable
+                    + " ("
+                    + "reminderID INTEGER PRIMARY KEY, title varchar(20),description varchar(50),dueDate varchar(20), completed varchar(5))");
+            String insert = "REPLACE INTO " + reminderTable
+                    + " Values (null,'" + r.getTitle()
+                    + "','" + r.getDescription()
+                    + "','" + r.getDueDate()
+                    + "','" + r.isCompleted()
+                    + "');";
+            sampleDB.execSQL(insert);
+            return true;
+        }catch (Exception e)
+        {
+            return false;
+        }
     }
 
     public static void dropTable()

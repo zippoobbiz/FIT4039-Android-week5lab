@@ -40,14 +40,14 @@ public class AddReminderActivity extends Activity {
                 r.setDescription(description_et.getText().toString());
                 r.setDueDate(new Date(dueDate_dp.getYear(), dueDate_dp.getMonth(), dueDate_dp.getDayOfMonth()));
                 r.setCompleted(false);
-
-                Intent returnIntent = new Intent();
-                returnIntent.putExtra("reminder", r);
-                setResult(RESULT_OK, returnIntent);
-                finish();
-
-                Log.i("AddReminderActivity", "submit");
-
+                if(DbHelper.createDatabaseSuccessfully(AddReminderActivity.this,r))
+                {
+                    finish();
+                    Log.i("AddReminderActivity", "insert success");
+                }else
+                {
+                    Log.i("AddReminderActivity", "insert fail, try again");
+                }
             }
 
         });
