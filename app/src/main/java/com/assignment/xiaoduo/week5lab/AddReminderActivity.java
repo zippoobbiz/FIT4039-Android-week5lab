@@ -1,6 +1,9 @@
 package com.assignment.xiaoduo.week5lab;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -77,22 +81,49 @@ public class AddReminderActivity extends Activity {
             return true;
         }else if(id == R.id.action_save)
         {
-            Toast.makeText(AddReminderActivity.this, "Button Clicked", Toast.LENGTH_SHORT).show();
-            Reminder r = new Reminder();
-            r.setTitle(title_et.getText().toString());
-            r.setDescription(description_et.getText().toString());
-            r.setDueDate(new Date(dueDate_dp.getYear(), dueDate_dp.getMonth(), dueDate_dp.getDayOfMonth()));
-            r.setCompleted(false);
-            if(DbHelper.createDatabaseSuccessfully(AddReminderActivity.this,r))
+            if(title_et.getText().toString().trim().equals(""))
             {
-                finish();
-                Log.i("AddReminderActivity", "insert success");
+                alert("Please input title.");
+                title_et.requestFocus();
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(title_et, InputMethodManager.SHOW_IMPLICIT);
+            }else if(description_et.getText().toString().trim().equals(""))
+            {
+                alert("Please input description.");
+                description_et.requestFocus();
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(description_et, InputMethodManager.SHOW_IMPLICIT);
             }else
             {
-                Log.i("AddReminderActivity", "insert fail, try again");
+                Toast.makeText(AddReminderActivity.this, "Button Clicked", Toast.LENGTH_SHORT).show();
+                Reminder r = new Reminder();
+                r.setTitle(title_et.getText().toString());
+                r.setDescription(description_et.getText().toString());
+                r.setDueDate(new Date(dueDate_dp.getYear(), dueDate_dp.getMonth(), dueDate_dp.getDayOfMonth()));
+                r.setCompleted(false);
+                if(DbHelper.createDatabaseSuccessfully(AddReminderActivity.this,r))
+                {
+                    finish();
+                    Log.i("AddReminderActivity", "insert success");
+                }else
+                {
+                    Log.i("AddReminderActivity", "insert fail, try again");
+                }
             }
         }
 
         return super.onOptionsItemSelected(item);
+    }
+    public void alert(String text)
+    {
+        new AlertDialog.Builder(this)
+                .setTitle("Warning!")
+                .setMessage(text)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // continue with delete
+                    }
+                }).setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 }
