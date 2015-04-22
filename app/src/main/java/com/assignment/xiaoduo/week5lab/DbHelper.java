@@ -188,6 +188,22 @@ public class DbHelper {
         }
         return null;
     }
+
+    public static boolean deleteReminderSuccessfully(Context context, int id)
+    {
+        try {
+            sampleDB = context
+                    .openOrCreateDatabase(dbName,
+                            context.MODE_PRIVATE, null);
+            sampleDB.execSQL("DELETE FROM " + reminderTable + " WHERE reminderID = " + id);
+
+            return true;
+        }catch (Exception e)
+        {
+            return false;
+        }
+    }
+
     private static void dis(String info)
     {
         Log.i("DbHelper", info);

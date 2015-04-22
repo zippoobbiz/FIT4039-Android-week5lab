@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,6 +15,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -22,6 +25,8 @@ public class ReminderListActivity extends Activity {
     List<Reminder> ReminderList;
     ListView reminderList_lv;
     ReminderAdapter adapter;
+    int currentReminderID;
+    int currentPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +46,45 @@ public class ReminderListActivity extends Activity {
             }
 
         });
+
+        registerForContextMenu(reminderList_lv);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v,
+                                    ContextMenu.ContextMenuInfo menuInfo) {
+
+        if (v.getId()==R.id.reminder_list_lv) {
+            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+            currentReminderID = ReminderList.get(info.position).getId();
+            currentPosition = info.position;
+            menu.setHeaderTitle("Operations");
+            String[] menuItems = {"Delete","Edit"};
+            for (int i = 0; i<menuItems.length; i++) {
+                menu.add(Menu.NONE, i, i, menuItems[i]);
+            }
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+        int menuItemIndex = item.getItemId();
+        if(menuItemIndex == 0)
+        {
+            if(DbHelper.deleteReminderSuccessfully(ReminderListActivity.this, currentReminderID))
+            {
+                ReminderList.remove(currentPosition);
+                adapter.notifyDataSetChanged();
+            }
+        }else if(menuItemIndex == 1)
+        {
+            Intent intent = new Intent(ReminderListActivity.this, EditReminderActivity.class);
+            intent.putExtra("reminderID",ReminderList.get(currentPosition).getId());
+            startActivity(intent);
+        }
+
+        return true;
     }
 
     @Override
@@ -48,6 +92,13 @@ public class ReminderListActivity extends Activity {
         super.onResume();
         ReminderList.clear();
         ReminderList.addAll(DbHelper.getReminders(this));
+        Collections.sort(ReminderList, new Comparator<Reminder>() {
+            @Override
+            public int compare(Reminder reminder1, Reminder reminder2) {
+
+                return reminder1.getDueDate().compareTo(reminder2.getDueDate());
+            }
+        });
         adapter.notifyDataSetChanged();
 
     }

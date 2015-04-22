@@ -46,7 +46,8 @@ public class ReminderAdapter extends BaseAdapter {
         TextView item_title_et = (TextView) convertView.findViewById(R.id.item_title_et);
         TextView item_due_date_et = (TextView) convertView.findViewById(R.id.item_due_date_et);
         item_title_et.setText(reminder.getTitle());
-        item_due_date_et.setText(reminder.getDueDate().toString());
+        item_due_date_et.setText(reminder.getDueDate().getDate()+"-"+( reminder.getDueDate().getMonth()+ 1 )+"-"+reminder.getDueDate().getYear());
+
 
         return convertView;
     }
